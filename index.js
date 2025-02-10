@@ -31,6 +31,14 @@ type Query {
     author(id: ID!): Author
   }
 
+type Mutation {
+  addAuthor(author:AddAuthor ): Author
+}
+input AddAuthor {
+  name: String!,
+  verified: Boolean!
+}
+
 `;
 
 const resolvers = {
@@ -41,6 +49,9 @@ const resolvers = {
     game(_, args) {
       console.log(args, _);
       return _db.games.find((item) => item.id == args.id);
+    },
+    authors() {
+      return _db.authors;
     },
   },
   Game: {
@@ -59,6 +70,14 @@ const resolvers = {
     },
     game(parent) {
       return _db.games.find((item) => item.id == parent.game_id);
+    },
+  },
+  Mutation: {
+    addAuthor: (_, args) => {
+      console.log(args);
+      _db.authors.push({ id: _db.authors.length + 1, ...args.author });
+
+      return args.author;
     },
   },
 };
